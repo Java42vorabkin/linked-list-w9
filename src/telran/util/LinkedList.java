@@ -110,31 +110,95 @@ public class LinkedList<T> implements List<T> {
 		if (resNode != null) {
 			res = resNode.obj;
 		}
-		return res;
+		return res; 
 	}
 
 	@Override
 	public T remove(int index) {
 		// TODO Auto-generated method stub
-		return null;
+		T result = null;
+		if (!isValidIndex(index)) {
+			return null;
+		}
+		if(index==0) {
+			result = removeHead();
+		} else if(index==(size-1)) {
+			result = removeTail();
+		} else {
+			result = removeMiddle(index);
+		}
+		size--;
+		return result; 
+		// Done
 	}
-
+	private T removeHead() {
+		T removedElement = head.obj;
+		head = head.next;
+		if (head != null) {
+			head.prev = null;
+		}
+		return removedElement;
+	}
+	private T removeTail() {
+		T removedElement = tail.obj;
+		tail = tail.prev;
+		if (tail != null) {
+			tail.next = null;
+		}
+		return removedElement;
+	}
+	private T removeMiddle(int index) {
+		Node<T> nodeToDelete = getNode(index);
+		Node<T> prevNode = nodeToDelete.prev;
+		Node<T> nextNode = nodeToDelete.next;
+		prevNode.next = nodeToDelete.next;
+		nextNode.prev = nodeToDelete.prev;
+		return nodeToDelete.obj;
+	}
 	@Override
 	public int indexOf(Predicate<T> predicate) {
 		// TODO Auto-generated method stub
-		return 0;
+		int result = -1;
+		int ind = 0;
+		while(ind<size) {
+			if(predicate.test(get(ind))) {
+				result = ind;
+				break;
+			}
+			ind++;
+		}
+		return result;
+		// Done
 	}
 
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
 		// TODO Auto-generated method stub
-		return 0;
+		int result = -1;
+		int ind = size-1;
+		while(ind>=0) {
+			if(predicate.test(get(ind))) {
+				result = ind;
+				break;
+			}
+			ind--;
+		}
+		return result;
 	}
 
 	@Override
 	public boolean removeIf(Predicate<T> predicate) {
 		// TODO Auto-generated method stub
-		return false;
+		int sizeBefore = size;
+		Node<T> currentNode = tail;
+		
+		for (int ind= size-1; ind>=0; ind--) {
+			if(predicate.test(currentNode.obj)) {
+				remove(ind);
+			} 
+			currentNode=currentNode.prev;
+		}
+		return sizeBefore > size;
 	}
 
 	@Override
@@ -150,11 +214,23 @@ public class LinkedList<T> implements List<T> {
 		//creates array of T objects
 		//passes over whole list and fills the array
 		//sorting filled array
-		return null;
+		T[] array = (T[]) new Object[size];
+		int ind=0;
+		while(ind<size) {
+			array[ind] = get(ind++);
+		}
+		return array;
+		// Done
 	}
 	private void fillListFromArray(T[] array) {
 		//TODO
-		//passes over whole list and fills elements from index=0 to index=size - 1 
+		//passes over whole list and fills elements from index=0 to index=size - 1
+		Node<T> current = head;
+		for (int i = 0; i < array.length; i++) {
+			current.obj=array[i];
+			current=current.next;
+		}
+		// Done
 	}
 
 }
