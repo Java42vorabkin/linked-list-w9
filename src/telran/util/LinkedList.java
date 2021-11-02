@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 
 public class LinkedList<T> implements List<T> {
-	private int size;
 
 	private static class Node<T> {
 		T obj;
@@ -17,6 +16,7 @@ public class LinkedList<T> implements List<T> {
 		}
 	}
 
+	private int size;
 	private Node<T> head; // reference to the first element
 	private Node<T> tail; // reference to the last element
 
@@ -117,17 +117,16 @@ public class LinkedList<T> implements List<T> {
 	public T remove(int index) {
 		// TODO Auto-generated method stub
 		T result = null;
-		if (!isValidIndex(index)) {
-			return null;
+		if (isValidIndex(index)) {
+			if(index==0) {
+				result = removeHead();
+			} else if(index==(size-1)) {
+				result = removeTail();
+			} else {
+				result = removeMiddle(index);
+			}
+			size--;
 		}
-		if(index==0) {
-			result = removeHead();
-		} else if(index==(size-1)) {
-			result = removeTail();
-		} else {
-			result = removeMiddle(index);
-		}
-		size--;
 		return result; 
 		// Done
 	}
@@ -159,13 +158,13 @@ public class LinkedList<T> implements List<T> {
 	public int indexOf(Predicate<T> predicate) {
 		// TODO Auto-generated method stub
 		int result = -1;
-		int ind = 0;
-		while(ind<size) {
-			if(predicate.test(get(ind))) {
+		Node<T> currentNode = head;
+		for (int ind =0; ind <size; ind++) {
+			if(predicate.test(currentNode.obj)) {
 				result = ind;
 				break;
 			}
-			ind++;
+			currentNode = currentNode.next;	
 		}
 		return result;
 		// Done
@@ -174,16 +173,16 @@ public class LinkedList<T> implements List<T> {
 	@Override
 	public int lastIndexOf(Predicate<T> predicate) {
 		// TODO Auto-generated method stub
-		int result = -1;
-		int ind = size-1;
-		while(ind>=0) {
-			if(predicate.test(get(ind))) {
+		int result =-1;
+		Node<T> currentNode = tail;
+		for (int ind =size-1; ind >=0; ind--) {
+			if(predicate.test(currentNode.obj)) {
 				result = ind;
 				break;
-			}
-			ind--;
-		}
-		return result;
+			} 
+			currentNode = currentNode.prev;	
+		}		
+		return  result;
 	}
 
 	@Override
@@ -200,7 +199,7 @@ public class LinkedList<T> implements List<T> {
 		}
 		return sizeBefore > size;
 	}
-
+ 
 	@Override
 	public void sort(Comparator<T> comp) {
 		T[] array = listToArray();
@@ -215,9 +214,10 @@ public class LinkedList<T> implements List<T> {
 		//passes over whole list and fills the array
 		//sorting filled array
 		T[] array = (T[]) new Object[size];
-		int ind=0;
-		while(ind<size) {
-			array[ind] = get(ind++);
+		Node<T> currentNode = head;
+		for (int ind = 0; ind < array.length; ind++) {
+			array[ind] = currentNode.obj;
+			currentNode = currentNode.next;
 		}
 		return array;
 		// Done
@@ -225,10 +225,10 @@ public class LinkedList<T> implements List<T> {
 	private void fillListFromArray(T[] array) {
 		//TODO
 		//passes over whole list and fills elements from index=0 to index=size - 1
-		Node<T> current = head;
-		for (int i = 0; i < array.length; i++) {
-			current.obj=array[i];
-			current=current.next;
+		Node<T> currentNode = head;
+		for (int ind = 0; ind < array.length; ind++) {
+			currentNode.obj = array[ind];
+			currentNode = currentNode.next;
 		}
 		// Done
 	}
